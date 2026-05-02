@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html lang="fil">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JimarStream | Professional Video Experience</title>
+    <title>JimarStream | Premium Video Experience</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
-        :root {
-            --brand: #3b82f6;
-        }
+        :root { --brand: #3b82f6; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #09090b;
             color: #fafafa;
+            overflow-x: hidden;
         }
 
-        /* Ambient Glow - Nagbibigay ng depth sa likod ng video */
+        /* Cinematic Background Glow */
         .ambient-glow {
             position: absolute;
             top: 50%;
@@ -34,7 +33,7 @@
             pointer-events: none;
         }
 
-        /* Video Container - Dynamic Height based on content */
+        /* Adaptive Video Stage */
         .video-stage {
             background: #000;
             border: 1px solid rgba(255,255,255,0.05);
@@ -46,7 +45,7 @@
             width: 100%;
         }
 
-        /* Custom Seek Bar - Pro Look */
+        /* Premium Range Inputs */
         input[type="range"] {
             -webkit-appearance: none;
             background: transparent;
@@ -64,42 +63,54 @@
             background: var(--brand);
             border-radius: 50%;
             margin-top: -4px;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
         }
 
-        .playlist-scroll::-webkit-scrollbar { width: 4px; }
-        .playlist-scroll::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-
         .active-item {
-            background: rgba(59, 130, 246, 0.1) !important;
+            background: rgba(59, 130, 246, 0.08) !important;
             border-left: 3px solid var(--brand);
         }
 
-        .video-controls-overlay {
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
-            transition: opacity 0.3s ease;
+        /* Interactive Like Button Styles */
+        .like-btn-active {
+            background: rgba(239, 68, 68, 0.1) !important;
+            border-color: rgba(239, 68, 68, 0.3) !important;
+            color: #ef4444 !important;
+        }
+        .like-btn-active i {
+            fill: #ef4444;
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.5));
+        }
+
+        /* Modal Smoothness */
+        #shareModal {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #shareModal.hidden {
+            display: none;
+            opacity: 0;
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <!-- Header Navigation -->
+    <!-- Navbar -->
     <nav class="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-xl">
         <div class="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-500/20">
+            <div class="flex items-center gap-3 group cursor-pointer">
+                <div class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
                     <i data-lucide="play" class="w-5 h-5 fill-white text-white"></i>
                 </div>
-                <span class="text-xl font-bold tracking-tighter">JIMAR<span class="text-blue-500">STREAM</span></span>
+                <span class="text-xl font-extrabold tracking-tighter uppercase">JIMAR<span class="text-blue-500 font-black">STREAM</span></span>
             </div>
             
             <div class="flex items-center gap-4">
                 <div class="hidden sm:block text-right">
-                    <p class="text-xs font-bold text-white">Jimar Streamer</p>
-                    <p class="text-[10px] text-zinc-500">Premium Account</p>
+                    <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Creator</p>
+                    <p class="text-xs font-bold text-white">Jimar Studio</p>
                 </div>
-                <div class="w-9 h-9 rounded-full border border-white/10 overflow-hidden bg-zinc-800">
-                    <!-- Gamit ang iyong orihinal na profile pic -->
+                <div class="w-9 h-9 rounded-full border border-white/10 overflow-hidden bg-zinc-800 hover:ring-2 ring-blue-500 transition-all">
                     <img src="IMG_20260502_153801_702.jpg" alt="Profile" class="w-full h-full object-cover" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Jimar'">
                 </div>
             </div>
@@ -109,243 +120,337 @@
     <main class="max-w-[1400px] mx-auto px-4 lg:px-8 py-8 relative">
         <div class="ambient-glow"></div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
             
-            <!-- Video Stage Column -->
+            <!-- Video Column -->
             <div class="lg:col-span-8 space-y-6">
-                
-                <div class="video-stage group relative rounded-3xl overflow-hidden">
-                    
-                    <!-- Main Video - Dynamic size based on file -->
+                <!-- Main Stage -->
+                <div class="video-stage group relative rounded-[2rem] overflow-hidden">
                     <video id="mainVideo" class="w-full h-auto max-h-[80vh] block object-contain" preload="auto">
                         <source id="videoSource" src="vid1.mp4" type="video/mp4">
                     </video>
 
-                    <!-- Interaction Overlay -->
+                    <!-- Play/Pause Overlay -->
                     <div id="playOverlay" class="absolute inset-0 flex items-center justify-center cursor-pointer z-10">
-                        <div id="centerBtn" class="bg-blue-600/10 backdrop-blur-2xl p-8 rounded-full border border-blue-500/20 transition-all transform hover:scale-110">
+                        <div id="centerBtn" class="bg-blue-600/10 backdrop-blur-2xl p-8 rounded-full border border-blue-500/20 transition-all transform hover:scale-110 active:scale-95">
                             <i data-lucide="play" id="centerIcon" class="w-12 h-12 fill-blue-500 text-blue-500"></i>
                         </div>
                     </div>
 
-                    <!-- Professional Controls -->
-                    <div class="video-controls-overlay absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 p-6 flex flex-col gap-4 pointer-events-none group-hover:pointer-events-auto z-20">
+                    <!-- Custom Player Controls -->
+                    <div class="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 p-8 flex flex-col gap-5 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-20 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
                         
-                        <!-- Progress Bar -->
-                        <div class="relative w-full h-1 group/seek cursor-pointer pointer-events-auto">
-                            <div class="absolute inset-0 bg-white/20 rounded-full"></div>
-                            <div id="progressFill" class="absolute inset-y-0 left-0 bg-blue-500 rounded-full" style="width: 0%"></div>
-                            <input type="range" id="seekSlider" class="absolute inset-0 w-full opacity-0" min="0" value="0" step="0.1">
+                        <!-- Seek Bar -->
+                        <div class="relative w-full group/seek h-1.5 flex items-center cursor-pointer pointer-events-auto">
+                            <div class="absolute inset-0 bg-white/10 rounded-full group-hover/seek:scale-y-125 transition-transform"></div>
+                            <div id="progressFill" class="absolute inset-y-0 left-0 bg-blue-500 rounded-full z-10"></div>
+                            <input type="range" id="seekSlider" class="absolute inset-0 w-full opacity-0 z-20 cursor-pointer" min="0" value="0" step="0.1">
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-5">
-                                <button id="playPauseBtn" class="text-white/90 hover:text-white transition-colors pointer-events-auto">
-                                    <i data-lucide="play" id="bottomIcon" class="w-6 h-6 fill-current"></i>
+                            <div class="flex items-center gap-6">
+                                <button id="playPauseBtn" class="text-white/80 hover:text-white transition-colors pointer-events-auto active:scale-90">
+                                    <i data-lucide="play" id="bottomIcon" class="w-7 h-7 fill-current"></i>
                                 </button>
-
-                                <div class="flex items-center gap-2 group/vol pointer-events-auto">
-                                    <i data-lucide="volume-2" class="w-5 h-5 text-zinc-400"></i>
-                                    <input type="range" id="volSlider" min="0" max="1" step="0.1" value="1" class="w-16 accent-blue-500">
+                                <div class="flex items-center gap-3 pointer-events-auto">
+                                    <i data-lucide="volume-2" class="w-5 h-5 text-zinc-500"></i>
+                                    <input type="range" id="volSlider" min="0" max="1" step="0.1" value="1" class="w-20 accent-blue-500">
                                 </div>
-
-                                <span class="text-xs font-medium text-zinc-400 tabular-nums">
-                                    <span id="curTime" class="text-white">0:00</span> / <span id="durTime">0:00</span>
+                                <span class="text-xs font-bold text-zinc-400 tabular-nums bg-white/5 px-2 py-1 rounded-md">
+                                    <span id="curTime" class="text-white">0:00</span> <span class="mx-1 opacity-20">/</span> <span id="durTime">0:00</span>
                                 </span>
                             </div>
-
-                            <div class="flex items-center gap-4 pointer-events-auto">
-                                <div class="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/5">
-                                    <button class="speed-btn px-2 py-0.5 text-[10px] font-bold text-zinc-500 hover:text-white" data-speed="1">1x</button>
-                                    <button class="speed-btn px-2 py-0.5 text-[10px] font-bold text-zinc-500 hover:text-white" data-speed="1.5">1.5x</button>
-                                    <button class="speed-btn px-2 py-0.5 text-[10px] font-bold text-zinc-500 hover:text-white" data-speed="2">2x</button>
-                                </div>
-                                <button id="fsBtn" class="text-zinc-400 hover:text-white"><i data-lucide="maximize" class="w-5 h-5"></i></button>
-                            </div>
+                            <button id="fsBtn" class="text-zinc-500 hover:text-white pointer-events-auto hover:rotate-12 transition-transform"><i data-lucide="maximize" class="w-5 h-5"></i></button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Info Section -->
-                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 p-2">
-                    <div class="space-y-1">
-                        <h1 id="mainTitle" class="text-2xl font-bold tracking-tight text-white lg:text-3xl">Enchanted to meet you</h1>
-                        <div class="flex items-center gap-3 text-sm">
-                            <span class="text-blue-500 font-bold">@JimarStream</span>
-                            <span class="text-zinc-600">•</span>
-                            <span class="text-zinc-500">Message for PraPra</span>
+                <!-- Title & Actions -->
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-6 px-2">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-black uppercase tracking-widest rounded">Streaming Now</span>
+                        </div>
+                        <h1 id="mainTitle" class="text-3xl font-extrabold tracking-tight text-white lg:text-4xl">Enchanted to meet you</h1>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-black text-xs shadow-lg shadow-blue-600/20">JS</div>
+                            <div class="text-sm">
+                                <p class="font-bold text-white">JimarStream Studio</p>
+                                <p class="text-xs text-zinc-500 font-medium">Dedicated Message for PraPra</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button class="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl border border-white/5 transition-all text-xs font-bold flex items-center gap-2">
-                            <i data-lucide="thumbs-up" class="w-4 h-4 text-blue-500"></i> Like
+                    
+                    <div class="flex items-center gap-3">
+                        <!-- ENHANCED LIKE BUTTON -->
+                        <button id="likeBtn" class="relative overflow-hidden bg-white/5 hover:bg-white/10 px-6 py-3 rounded-2xl border border-white/5 transition-all text-xs font-black flex items-center gap-2 group active:scale-95 shadow-xl">
+                            <i data-lucide="heart" id="heartIcon" class="w-4 h-4 transition-all duration-300"></i>
+                            <span id="likeText">LIKE</span>
                         </button>
-                        <button class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl transition-all text-xs font-bold shadow-lg shadow-blue-600/20">
-                            Share Video
+                        
+                        <!-- SHARE BUTTON -->
+                        <button id="openShareBtn" class="bg-blue-600 hover:bg-blue-500 px-7 py-3 rounded-2xl transition-all text-xs font-black text-white shadow-xl shadow-blue-600/20 flex items-center gap-2 group active:scale-95">
+                            <i data-lucide="share-2" class="w-4 h-4 group-hover:rotate-12 transition-transform"></i> SHARE
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Playlist Column -->
-            <div class="lg:col-span-4 space-y-5">
+            <div class="lg:col-span-4 space-y-6">
                 <div class="flex items-center justify-between px-2">
-                    <h2 class="font-bold text-lg">Playlist Queue</h2>
-                    <span class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Auto-play On</span>
+                    <h2 class="font-black text-lg tracking-tight">UP NEXT</h2>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        <span class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Auto-play</span>
+                    </div>
                 </div>
 
-                <div id="playlist" class="space-y-2 max-h-[70vh] overflow-y-auto pr-2 playlist-scroll">
-                    
+                <div id="playlist" class="space-y-3 max-h-[70vh] overflow-y-auto pr-3 custom-scroll">
                     <!-- Item 1 -->
-                    <div class="playlist-item active-item flex gap-4 p-3 rounded-2xl cursor-pointer hover:bg-white/5 transition-all group" 
+                    <div class="playlist-item active-item flex gap-4 p-3 rounded-3xl cursor-pointer hover:bg-white/5 transition-all group" 
                          data-url="vid1.mp4" data-title="Enchanted to meet you">
-                        <div class="w-32 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-lg relative">
-                            <img src="pic1.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="w-32 aspect-video rounded-2xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-xl relative">
+                            <img src="pic1.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                             <div class="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>
                         <div class="min-w-0 flex flex-col justify-center">
-                            <h4 class="text-sm font-bold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">Enchanted to meet you</h4>
-                            <p class="text-[11px] text-zinc-500 mt-0.5">Lyrics Video</p>
-                            <span class="playing-indicator hidden mt-2 text-[10px] text-blue-500 font-black uppercase italic">Now Playing</span>
+                            <h4 class="text-sm font-extrabold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">Enchanted to meet you</h4>
+                            <p class="text-[11px] text-zinc-500 mt-1 font-bold">Lyrics Special</p>
+                            <span class="playing-tag hidden text-[10px] text-blue-500 font-black uppercase mt-2 tracking-tighter italic animate-pulse">Now Playing</span>
                         </div>
                     </div>
-
                     <!-- Item 2 -->
-                    <div class="playlist-item flex gap-4 p-3 rounded-2xl cursor-pointer hover:bg-white/5 transition-all group" 
+                    <div class="playlist-item flex gap-4 p-3 rounded-3xl cursor-pointer hover:bg-white/5 transition-all group" 
                          data-url="vid2.mp4" data-title="Lifetime reimagine - Cinematic">
-                        <div class="w-32 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-lg relative">
-                            <img src="pic2.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="w-32 aspect-video rounded-2xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-xl relative">
+                            <img src="pic2.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         </div>
                         <div class="min-w-0 flex flex-col justify-center">
-                            <h4 class="text-sm font-bold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">Lifetime reimagine</h4>
-                            <p class="text-[11px] text-zinc-500 mt-0.5">Short Film</p>
+                            <h4 class="text-sm font-extrabold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">Lifetime reimagine</h4>
+                            <p class="text-[11px] text-zinc-500 mt-1 font-bold">Short Film</p>
                         </div>
                     </div>
-
                     <!-- Item 3 -->
-                    <div class="playlist-item flex gap-4 p-3 rounded-2xl cursor-pointer hover:bg-white/5 transition-all group" 
+                    <div class="playlist-item flex gap-4 p-3 rounded-3xl cursor-pointer hover:bg-white/5 transition-all group" 
                          data-url="vid3.mp4" data-title="No body said it was easy">
-                        <div class="w-32 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-lg relative">
-                            <img src="pic3.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="w-32 aspect-video rounded-2xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-xl relative">
+                            <img src="pic3.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         </div>
                         <div class="min-w-0 flex flex-col justify-center">
-                            <h4 class="text-sm font-bold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">No body said it was easy</h4>
-                            <p class="text-[11px] text-zinc-500 mt-0.5">Creative Art</p>
+                            <h4 class="text-sm font-extrabold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">No body said it was easy</h4>
+                            <p class="text-[11px] text-zinc-500 mt-1 font-bold">Creative Art</p>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- Professional Share Modal -->
+    <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden">
+        <div class="bg-zinc-900 border border-white/10 w-full max-w-md rounded-[2.5rem] p-8 shadow-[0_0_100px_rgba(0,0,0,0.8)]">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-2xl font-black tracking-tight">Share Experience</h3>
+                <button id="closeShareBtn" class="p-2 hover:bg-white/5 rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <div class="grid grid-cols-4 gap-4 mb-10">
+                <button onclick="shareTo('facebook')" class="flex flex-col items-center gap-3 group">
+                    <div class="w-14 h-14 bg-[#1877F2]/10 rounded-2xl flex items-center justify-center text-[#1877F2] group-hover:bg-[#1877F2] group-hover:text-white group-hover:-translate-y-1 transition-all shadow-lg">
+                        <i data-lucide="facebook" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-zinc-500 group-hover:text-white uppercase tracking-tighter">Facebook</span>
+                </button>
+                <button onclick="shareTo('twitter')" class="flex flex-col items-center gap-3 group">
+                    <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-white group-hover:bg-white group-hover:text-black group-hover:-translate-y-1 transition-all shadow-lg">
+                        <i data-lucide="twitter" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-zinc-500 group-hover:text-white uppercase tracking-tighter">Twitter</span>
+                </button>
+                <button onclick="shareTo('whatsapp')" class="flex flex-col items-center gap-3 group">
+                    <div class="w-14 h-14 bg-[#25D366]/10 rounded-2xl flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white group-hover:-translate-y-1 transition-all shadow-lg">
+                        <i data-lucide="message-circle" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-zinc-500 group-hover:text-white uppercase tracking-tighter">WhatsApp</span>
+                </button>
+                <button onclick="copyLink()" class="flex flex-col items-center gap-3 group">
+                    <div class="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white group-hover:-translate-y-1 transition-all shadow-lg">
+                        <i data-lucide="link" class="w-7 h-7"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-zinc-500 group-hover:text-white uppercase tracking-tighter">Copy Link</span>
+                </button>
+            </div>
+
+            <div class="bg-black/50 border border-white/5 p-4 rounded-2xl flex items-center justify-between gap-4">
+                <p id="shareUrlDisplay" class="text-[10px] text-zinc-500 truncate font-mono font-bold">Loading link...</p>
+                <button onclick="copyLink()" class="text-[10px] font-black text-blue-500 hover:text-blue-400 whitespace-nowrap uppercase tracking-widest">Copy</button>
+            </div>
+            
+            <p id="copyFeedback" class="text-center text-[10px] text-blue-500 mt-4 font-black uppercase tracking-widest opacity-0 transition-opacity">Link Secured to Clipboard</p>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
 
         const video = document.getElementById('mainVideo');
-        const playOverlay = document.getElementById('playOverlay');
-        const centerBtn = document.getElementById('centerBtn');
-        const centerIcon = document.getElementById('centerIcon');
-        const bottomIcon = document.getElementById('bottomIcon');
         const progressFill = document.getElementById('progressFill');
         const seekSlider = document.getElementById('seekSlider');
         const curTimeText = document.getElementById('curTime');
         const durTimeText = document.getElementById('durTime');
-        const volSlider = document.getElementById('volSlider');
+        const likeBtn = document.getElementById('likeBtn');
+        const heartIcon = document.getElementById('heartIcon');
+        const shareModal = document.getElementById('shareModal');
         const mainTitle = document.getElementById('mainTitle');
         const playlistItems = document.querySelectorAll('.playlist-item');
-        const speedBtns = document.querySelectorAll('.speed-btn');
 
-        function togglePlay() {
-            if (video.paused) {
-                video.play().then(() => updateUI(true));
-            } else {
-                video.pause();
-                updateUI(false);
-            }
+        // --- DYNAMIC URL LOGIC (FOR GITHUB PAGES) ---
+        function getCurrentFile() {
+            const path = video.src;
+            return path.substring(path.lastIndexOf('/') + 1);
         }
 
-        function updateUI(isPlaying) {
+        function getSmartLink() {
+            const filename = getCurrentFile();
+            const base = "https://jimar143.github.io/Stream/";
+            return `${base}?v=${filename}`;
+        }
+
+        function initVideoFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const vParam = params.get('v');
+            if (vParam) {
+                const target = Array.from(playlistItems).find(i => i.dataset.url === vParam);
+                if (target) switchVideo(target);
+            }
+            updatePlaylistUI();
+        }
+
+        function switchVideo(item) {
+            playlistItems.forEach(i => i.classList.remove('active-item'));
+            item.classList.add('active-item');
+            
+            video.src = item.dataset.url;
+            mainTitle.innerText = item.dataset.title;
+            video.load();
+            updateIcons(false);
+            updatePlaylistUI();
+        }
+
+        // --- UI INDICATORS ---
+        function updatePlaylistUI() {
+            playlistItems.forEach(item => {
+                const tag = item.querySelector('.playing-tag');
+                if (item.classList.contains('active-item')) {
+                    tag.classList.remove('hidden');
+                } else {
+                    tag.classList.add('hidden');
+                }
+            });
+        }
+
+        // --- LIKE INTERACTION ---
+        let isLiked = false;
+        likeBtn.addEventListener('click', () => {
+            isLiked = !isLiked;
+            if (isLiked) {
+                likeBtn.classList.add('like-btn-active');
+                document.getElementById('likeText').innerText = "LIKED";
+                // Trigger a pop animation
+                likeBtn.animate([
+                    { transform: 'scale(1)' },
+                    { transform: 'scale(1.15)' },
+                    { transform: 'scale(1)' }
+                ], { duration: 300, easing: 'ease-out' });
+            } else {
+                likeBtn.classList.remove('like-btn-active');
+                document.getElementById('likeText').innerText = "LIKE";
+            }
+            lucide.createIcons();
+        });
+
+        // --- SHARE SYSTEM ---
+        document.getElementById('openShareBtn').addEventListener('click', () => {
+            document.getElementById('shareUrlDisplay').innerText = getSmartLink();
+            shareModal.classList.remove('hidden');
+        });
+
+        document.getElementById('closeShareBtn').addEventListener('click', () => {
+            shareModal.classList.add('hidden');
+        });
+
+        function shareTo(platform) {
+            const url = encodeURIComponent(getSmartLink());
+            const text = encodeURIComponent("Watch this JimarStream special: " + mainTitle.innerText);
+            let shareUrl = "";
+
+            switch(platform) {
+                case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; break;
+                case 'twitter': shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`; break;
+                case 'whatsapp': shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`; break;
+            }
+            window.open(shareUrl, '_blank');
+        }
+
+        function copyLink() {
+            const link = getSmartLink();
+            const el = document.createElement('textarea');
+            el.value = link;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            
+            const feedback = document.getElementById('copyFeedback');
+            feedback.style.opacity = '1';
+            setTimeout(() => feedback.style.opacity = '0', 2000);
+        }
+
+        // --- CORE PLAYER ENGINE ---
+        function togglePlay() {
+            if (video.paused) { video.play(); updateIcons(true); }
+            else { video.pause(); updateIcons(false); }
+        }
+
+        function updateIcons(isPlaying) {
+            const centerIcon = document.getElementById('centerIcon');
+            const bottomIcon = document.getElementById('bottomIcon');
+            const centerBtn = document.getElementById('centerBtn');
             if (isPlaying) {
                 centerIcon.setAttribute('data-lucide', 'pause');
                 bottomIcon.setAttribute('data-lucide', 'pause');
                 centerBtn.style.opacity = '0';
-                centerBtn.style.transform = 'scale(1.5)';
             } else {
                 centerIcon.setAttribute('data-lucide', 'play');
                 bottomIcon.setAttribute('data-lucide', 'play');
                 centerBtn.style.opacity = '1';
-                centerBtn.style.transform = 'scale(1)';
             }
             lucide.createIcons();
         }
 
-        playOverlay.addEventListener('click', togglePlay);
+        document.getElementById('playOverlay').addEventListener('click', togglePlay);
         document.getElementById('playPauseBtn').addEventListener('click', togglePlay);
         video.addEventListener('click', togglePlay);
 
         video.addEventListener('timeupdate', () => {
-            if (!isNaN(video.duration)) {
-                const p = (video.currentTime / video.duration) * 100;
-                progressFill.style.width = `${p}%`;
-                seekSlider.value = video.currentTime;
-                curTimeText.innerText = formatTime(video.currentTime);
-            }
+            const p = (video.currentTime / video.duration) * 100;
+            progressFill.style.width = `${p}%`;
+            seekSlider.value = video.currentTime;
+            curTimeText.innerText = formatTime(video.currentTime);
         });
 
         video.addEventListener('loadedmetadata', () => {
             durTimeText.innerText = formatTime(video.duration);
             seekSlider.max = video.duration;
-            // I-resync ang "Now Playing" indicator
-            updatePlaylistUI();
         });
 
-        seekSlider.addEventListener('input', () => {
-            video.currentTime = seekSlider.value;
-        });
-
-        volSlider.addEventListener('input', (e) => {
-            video.volume = e.target.value;
-        });
-
-        speedBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                video.playbackRate = btn.dataset.speed;
-                speedBtns.forEach(b => b.classList.replace('text-white', 'text-zinc-500'));
-                btn.classList.replace('text-zinc-500', 'text-white');
-            });
-        });
-
+        seekSlider.addEventListener('input', () => video.currentTime = seekSlider.value);
+        document.getElementById('volSlider').addEventListener('input', (e) => video.volume = e.target.value);
+        
         document.getElementById('fsBtn').addEventListener('click', () => {
             if (!document.fullscreenElement) video.parentElement.requestFullscreen();
             else document.exitFullscreen();
-        });
-
-        function updatePlaylistUI() {
-            playlistItems.forEach(item => {
-                const indicator = item.querySelector('.playing-indicator');
-                if (item.classList.contains('active-item')) {
-                    indicator.classList.remove('hidden');
-                } else {
-                    indicator.classList.add('hidden');
-                }
-            });
-        }
-
-        playlistItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const url = item.getAttribute('data-url');
-                const title = item.getAttribute('data-title');
-
-                playlistItems.forEach(i => i.classList.remove('active-item'));
-                item.classList.add('active-item');
-
-                video.src = url;
-                mainTitle.innerText = title;
-                video.load();
-                video.play().then(() => updateUI(true));
-                updatePlaylistUI();
-            });
         });
 
         function formatTime(s) {
@@ -354,8 +459,12 @@
             return `${min}:${sec < 10 ? '0' : ''}${sec}`;
         }
 
-        // Initialize UI on first load
-        window.onload = updatePlaylistUI;
+        playlistItems.forEach(item => {
+            item.addEventListener('click', () => switchVideo(item));
+        });
+
+        // Bootstrap
+        window.onload = initVideoFromUrl;
     </script>
 </body>
 </html>
