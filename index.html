@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JimarStream | Professional Video Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --brand: #3b82f6;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #09090b;
+            color: #fafafa;
+        }
+
+        /* Ambient Glow - Nagbibigay ng depth sa likod ng video */
+        .ambient-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: 70%;
+            background: var(--brand);
+            filter: blur(120px);
+            opacity: 0.12;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Video Container - Dynamic Height based on content */
+        .video-stage {
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-height: 80vh;
+            width: 100%;
+        }
+
+        /* Custom Seek Bar - Pro Look */
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 12px;
+            width: 12px;
+            background: var(--brand);
+            border-radius: 50%;
+            margin-top: -4px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .playlist-scroll::-webkit-scrollbar { width: 4px; }
+        .playlist-scroll::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+
+        .active-item {
+            background: rgba(59, 130, 246, 0.1) !important;
+            border-left: 3px solid var(--brand);
+        }
+
+        .video-controls-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header Navigation -->
+    <nav class="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-xl">
+        <div class="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-500/20">
+                    <i data-lucide="play" class="w-5 h-5 fill-white text-white"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tighter">JIMAR<span class="text-blue-500">STREAM</span></span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:block text-right">
+                    <p class="text-xs font-bold text-white">Jimar Streamer</p>
+                    <p class="text-[10px] text-zinc-500">Premium Account</p>
+                </div>
+                <div class="w-9 h-9 rounded-full border border-white/10 overflow-hidden bg-zinc-800">
+                    <!-- Gamit ang iyong orihinal na profile pic -->
+                    <img src="IMG_20260502_153801_702.jpg" alt="Profile" class="w-full h-full object-cover" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Jimar'">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-[1400px] mx-auto px-4 lg:px-8 py-8 relative">
+        <div class="ambient-glow"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Video Stage Column -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <div class="video-stage group relative rounded-3xl overflow-hidden">
+                    
+                    <!-- Main Video - Dynamic size based on file -->
+                    <video id="mainVideo" class="w-full h-auto max-h-[80vh] block object-contain" preload="auto">
+                        <source id="videoSource" src="vid1.mp4" type="video/mp4">
+                    </video>
+
+                    <!-- Interaction Overlay -->
+                    <div id="playOverlay" class="absolute inset-0 flex items-center justify-center cursor-pointer z-10">
+                        <div id="centerBtn" class="bg-blue-600/10 backdrop-blur-2xl p-8 rounded-full border border-blue-500/20 transition-all transform hover:scale-110">
+                            <i data-lucide="play" id="centerIcon" class="w-12 h-12 fill-blue-500 text-blue-500"></i>
+                        </div>
+                    </div>
+
+                    <!-- Professional Controls -->
+                    <div class="video-controls-overlay absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 p-6 flex flex-col gap-4 pointer-events-none group-hover:pointer-events-auto z-20">
+                        
+                        <!-- Progress Bar -->
+                        <div class="relative w-full h-1 group/seek cursor-pointer pointer-events-auto">
+                            <div class="absolute inset-0 bg-white/20 rounded-full"></div>
+                            <div id="progressFill" class="absolute inset-y-0 left-0 bg-blue-500 rounded-full" style="width: 0%"></div>
+                            <input type="range" id="seekSlider" class="absolute inset-0 w-full opacity-0" min="0" value="0" step="0.1">
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-5">
+                                <button id="playPauseBtn" class="text-white/90 hover:text-white transition-colors pointer-events-auto">
+                                    <i data-lucide="play" id="bottomIcon" class="w-6 h-6 fill-current"></i>
+                                </button>
+
+                                <div class="flex items-center gap-2 group/vol pointer-events-auto">
+                                    <i data-lucide="volume-2" class="w-5 h-5 text-zinc-400"></i>
+                                    <input type="range" id="volSlider" min="0" max="1" step="0.1" value="1" class="w-16 accent-blue-500">
+                                </div>
+
+                                <span class="text-xs font-medium text-zinc-400 tabular-nums">
+                                    <span id="curTime" class="text-white">0:00</span> / <span id="durTime">0:00</span>
+                                </span>
+                            </div>
+
+                            <div class="flex items-center gap-4 pointer-events-auto">
+                                <div class="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/5">
+                                    <button class="speed-btn px-2 py-0.5 text-[10px] font-bold text-zinc-500 hover:text-white" data-speed="1">1x</button>
+                                    <button class="speed-btn px-2 py-0.5 text-[10px] font-bold text-zinc-500 hover:text-white" data-speed="1.5">1.5x</button>
+                                    <button class="speed-btn px-2 py-0.5 text-[10px] font-bold text-zinc-500 hover:text-white" data-speed="2">2x</button>
+                                </div>
+                                <button id="fsBtn" class="text-zinc-400 hover:text-white"><i data-lucide="maximize" class="w-5 h-5"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Section -->
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 p-2">
+                    <div class="space-y-1">
+                        <h1 id="mainTitle" class="text-2xl font-bold tracking-tight text-white lg:text-3xl">Enchanted to meet you</h1>
+                        <div class="flex items-center gap-3 text-sm">
+                            <span class="text-blue-500 font-bold">@JimarStream</span>
+                            <span class="text-zinc-600">•</span>
+                            <span class="text-zinc-500">Message for PraPra</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl border border-white/5 transition-all text-xs font-bold flex items-center gap-2">
+                            <i data-lucide="thumbs-up" class="w-4 h-4 text-blue-500"></i> Like
+                        </button>
+                        <button class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl transition-all text-xs font-bold shadow-lg shadow-blue-600/20">
+                            Share Video
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playlist Column -->
+            <div class="lg:col-span-4 space-y-5">
+                <div class="flex items-center justify-between px-2">
+                    <h2 class="font-bold text-lg">Playlist Queue</h2>
+                    <span class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Auto-play On</span>
+                </div>
+
+                <div id="playlist" class="space-y-2 max-h-[70vh] overflow-y-auto pr-2 playlist-scroll">
+                    
+                    <!-- Item 1 -->
+                    <div class="playlist-item active-item flex gap-4 p-3 rounded-2xl cursor-pointer hover:bg-white/5 transition-all group" 
+                         data-url="vid1.mp4" data-title="Enchanted to meet you">
+                        <div class="w-32 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-lg relative">
+                            <img src="pic1.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        </div>
+                        <div class="min-w-0 flex flex-col justify-center">
+                            <h4 class="text-sm font-bold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">Enchanted to meet you</h4>
+                            <p class="text-[11px] text-zinc-500 mt-0.5">Lyrics Video</p>
+                            <span class="playing-indicator hidden mt-2 text-[10px] text-blue-500 font-black uppercase italic">Now Playing</span>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="playlist-item flex gap-4 p-3 rounded-2xl cursor-pointer hover:bg-white/5 transition-all group" 
+                         data-url="vid2.mp4" data-title="Lifetime reimagine - Cinematic">
+                        <div class="w-32 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-lg relative">
+                            <img src="pic2.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="min-w-0 flex flex-col justify-center">
+                            <h4 class="text-sm font-bold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">Lifetime reimagine</h4>
+                            <p class="text-[11px] text-zinc-500 mt-0.5">Short Film</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="playlist-item flex gap-4 p-3 rounded-2xl cursor-pointer hover:bg-white/5 transition-all group" 
+                         data-url="vid3.mp4" data-title="No body said it was easy">
+                        <div class="w-32 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-lg relative">
+                            <img src="pic3.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="min-w-0 flex flex-col justify-center">
+                            <h4 class="text-sm font-bold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">No body said it was easy</h4>
+                            <p class="text-[11px] text-zinc-500 mt-0.5">Creative Art</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        const video = document.getElementById('mainVideo');
+        const playOverlay = document.getElementById('playOverlay');
+        const centerBtn = document.getElementById('centerBtn');
+        const centerIcon = document.getElementById('centerIcon');
+        const bottomIcon = document.getElementById('bottomIcon');
+        const progressFill = document.getElementById('progressFill');
+        const seekSlider = document.getElementById('seekSlider');
+        const curTimeText = document.getElementById('curTime');
+        const durTimeText = document.getElementById('durTime');
+        const volSlider = document.getElementById('volSlider');
+        const mainTitle = document.getElementById('mainTitle');
+        const playlistItems = document.querySelectorAll('.playlist-item');
+        const speedBtns = document.querySelectorAll('.speed-btn');
+
+        function togglePlay() {
+            if (video.paused) {
+                video.play().then(() => updateUI(true));
+            } else {
+                video.pause();
+                updateUI(false);
+            }
+        }
+
+        function updateUI(isPlaying) {
+            if (isPlaying) {
+                centerIcon.setAttribute('data-lucide', 'pause');
+                bottomIcon.setAttribute('data-lucide', 'pause');
+                centerBtn.style.opacity = '0';
+                centerBtn.style.transform = 'scale(1.5)';
+            } else {
+                centerIcon.setAttribute('data-lucide', 'play');
+                bottomIcon.setAttribute('data-lucide', 'play');
+                centerBtn.style.opacity = '1';
+                centerBtn.style.transform = 'scale(1)';
+            }
+            lucide.createIcons();
+        }
+
+        playOverlay.addEventListener('click', togglePlay);
+        document.getElementById('playPauseBtn').addEventListener('click', togglePlay);
+        video.addEventListener('click', togglePlay);
+
+        video.addEventListener('timeupdate', () => {
+            if (!isNaN(video.duration)) {
+                const p = (video.currentTime / video.duration) * 100;
+                progressFill.style.width = `${p}%`;
+                seekSlider.value = video.currentTime;
+                curTimeText.innerText = formatTime(video.currentTime);
+            }
+        });
+
+        video.addEventListener('loadedmetadata', () => {
+            durTimeText.innerText = formatTime(video.duration);
+            seekSlider.max = video.duration;
+            // I-resync ang "Now Playing" indicator
+            updatePlaylistUI();
+        });
+
+        seekSlider.addEventListener('input', () => {
+            video.currentTime = seekSlider.value;
+        });
+
+        volSlider.addEventListener('input', (e) => {
+            video.volume = e.target.value;
+        });
+
+        speedBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                video.playbackRate = btn.dataset.speed;
+                speedBtns.forEach(b => b.classList.replace('text-white', 'text-zinc-500'));
+                btn.classList.replace('text-zinc-500', 'text-white');
+            });
+        });
+
+        document.getElementById('fsBtn').addEventListener('click', () => {
+            if (!document.fullscreenElement) video.parentElement.requestFullscreen();
+            else document.exitFullscreen();
+        });
+
+        function updatePlaylistUI() {
+            playlistItems.forEach(item => {
+                const indicator = item.querySelector('.playing-indicator');
+                if (item.classList.contains('active-item')) {
+                    indicator.classList.remove('hidden');
+                } else {
+                    indicator.classList.add('hidden');
+                }
+            });
+        }
+
+        playlistItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const url = item.getAttribute('data-url');
+                const title = item.getAttribute('data-title');
+
+                playlistItems.forEach(i => i.classList.remove('active-item'));
+                item.classList.add('active-item');
+
+                video.src = url;
+                mainTitle.innerText = title;
+                video.load();
+                video.play().then(() => updateUI(true));
+                updatePlaylistUI();
+            });
+        });
+
+        function formatTime(s) {
+            const min = Math.floor(s / 60);
+            const sec = Math.floor(s % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        // Initialize UI on first load
+        window.onload = updatePlaylistUI;
+    </script>
+</body>
+</html>
