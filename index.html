@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JimarStream | Premium Video Experience</title>
+    <title>JimarStream | For Pra Pra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -82,6 +82,18 @@
             opacity: 0;
             transform: scale(0.98);
         }
+
+        /* Custom Scrollbar */
+        #playlist::-webkit-scrollbar {
+            width: 4px;
+        }
+        #playlist::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #playlist::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -97,7 +109,7 @@
             
             <div class="flex items-center gap-4">
                 <div class="w-9 h-9 rounded-full border border-white/10 overflow-hidden bg-zinc-800 ring-blue-500 transition-all">
-                    <img src="IMG_20260502_153801_702.jpg" alt="Profile" class="w-full h-full object-cover" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Jimar'">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jimar" alt="Profile" class="w-full h-full object-cover">
                 </div>
             </div>
         </div>
@@ -171,37 +183,39 @@
 
             <div class="lg:col-span-4 space-y-6">
                 <div class="flex items-center justify-between px-2">
-                    <h2 class="font-black text-lg tracking-tight">UP NEXT</h2>
-                    <span class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Auto-play On</span>
+                    <h2 class="font-black text-lg tracking-tight text-zinc-300">UP NEXT</h2>
+                    <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-2 py-1 rounded-full">Auto-play On</span>
                 </div>
 
                 <div id="playlist" class="space-y-3 max-h-[70vh] overflow-y-auto pr-3">
                     <div class="playlist-item active-item flex gap-4 p-3 rounded-3xl cursor-pointer hover:bg-white/5 transition-all group" data-url="vid1.mp4" data-title="Enchanted to meet you">
                         <div class="w-32 aspect-video rounded-2xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-xl">
-                            <img src="pic1.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <img src="pic1.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=300'">
                         </div>
                         <div class="min-w-0 flex flex-col justify-center">
                             <h4 class="text-sm font-extrabold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">Enchanted to meet you</h4>
                             <p class="text-[11px] text-zinc-500 font-bold">Lyrics Special</p>
-                            <span class="playing-tag hidden text-[10px] text-blue-500 font-black uppercase mt-2 animate-pulse italic">Playing</span>
+                            <span class="playing-tag hidden text-[10px] text-blue-500 font-black uppercase mt-2 animate-pulse italic">Playing Now</span>
                         </div>
                     </div>
                     <div class="playlist-item flex gap-4 p-3 rounded-3xl cursor-pointer hover:bg-white/5 transition-all group" data-url="vid2.mp4" data-title="Lifetime reimagine - Cinematic">
                         <div class="w-32 aspect-video rounded-2xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-xl">
-                            <img src="pic2.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <img src="pic2.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=300'">
                         </div>
                         <div class="min-w-0 flex flex-col justify-center">
                             <h4 class="text-sm font-extrabold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">Lifetime reimagine</h4>
                             <p class="text-[11px] text-zinc-500 font-bold">Short Film</p>
+                            <span class="playing-tag hidden text-[10px] text-blue-500 font-black uppercase mt-2 animate-pulse italic">Playing Now</span>
                         </div>
                     </div>
                     <div class="playlist-item flex gap-4 p-3 rounded-3xl cursor-pointer hover:bg-white/5 transition-all group" data-url="vid3.mp4" data-title="No body said it was easy">
                         <div class="w-32 aspect-video rounded-2xl overflow-hidden flex-shrink-0 bg-zinc-900 shadow-xl">
-                            <img src="pic3.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <img src="pic3.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300'">
                         </div>
                         <div class="min-w-0 flex flex-col justify-center">
                             <h4 class="text-sm font-extrabold text-zinc-100 truncate group-hover:text-blue-400 transition-colors">No body said it was easy</h4>
                             <p class="text-[11px] text-zinc-500 font-bold">Creative Art</p>
+                            <span class="playing-tag hidden text-[10px] text-blue-500 font-black uppercase mt-2 animate-pulse italic">Playing Now</span>
                         </div>
                     </div>
                 </div>
@@ -209,6 +223,7 @@
         </div>
     </main>
 
+    <!-- Share Modal -->
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden">
         <div class="bg-zinc-900 border border-white/10 w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl">
             <div class="flex justify-between items-center mb-8">
@@ -246,7 +261,21 @@
         function getSmartLink() {
             const path = video.src;
             const filename = path.substring(path.lastIndexOf('/') + 1);
-            return `https://jimar143.github.io/Stream/?v=${filename}`;
+            return `${window.location.origin}${window.location.pathname}?v=${filename}`;
+        }
+
+        // AUTO-PLAY LOGIC: Find the next item in the list
+        function playNext() {
+            const currentActive = document.querySelector('.playlist-item.active-item');
+            const nextItem = currentActive.nextElementSibling;
+            
+            if (nextItem && nextItem.classList.contains('playlist-item')) {
+                switchVideo(nextItem);
+            } else {
+                // If end of playlist, loop to start or just stop
+                console.log("End of playlist reached.");
+                updateIcons(false);
+            }
         }
 
         function switchVideo(item) {
@@ -258,18 +287,21 @@
             
             video.load();
             
-            // AUTO PLAY LOGIC
+            // Start playing immediately on switch
             const playPromise = video.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     updateIcons(true);
                 }).catch(error => {
-                    console.log("Autoplay prevented:", error);
+                    console.log("Play failed:", error);
                     updateIcons(false);
                 });
             }
             
             updatePlaylistUI();
+            
+            // Scroll the playlist to show active item if needed
+            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         function updatePlaylistUI() {
@@ -283,6 +315,13 @@
             });
         }
 
+        // EVENT: Video Ended -> Trigger Auto-play
+        video.addEventListener('ended', () => {
+            console.log("Video ended. Moving to next...");
+            playNext();
+        });
+
+        // Other Controls
         let isLiked = false;
         likeBtn.addEventListener('click', () => {
             isLiked = !isLiked;
@@ -318,8 +357,9 @@
         }
 
         function copyLink() {
+            const link = getSmartLink();
             const el = document.createElement('textarea');
-            el.value = getSmartLink();
+            el.value = link;
             document.body.appendChild(el);
             el.select();
             document.execCommand('copy');
@@ -342,10 +382,12 @@
                 centerIcon.setAttribute('data-lucide', 'pause');
                 bottomIcon.setAttribute('data-lucide', 'pause');
                 centerBtn.style.opacity = '0';
+                centerBtn.style.pointerEvents = 'none';
             } else {
                 centerIcon.setAttribute('data-lucide', 'play');
                 bottomIcon.setAttribute('data-lucide', 'play');
                 centerBtn.style.opacity = '1';
+                centerBtn.style.pointerEvents = 'auto';
             }
             lucide.createIcons();
         }
@@ -370,9 +412,15 @@
 
         seekSlider.addEventListener('input', () => video.currentTime = seekSlider.value);
         document.getElementById('volSlider').addEventListener('input', (e) => video.volume = e.target.value);
+        
         document.getElementById('fsBtn').addEventListener('click', () => {
-            if (!document.fullscreenElement) video.parentElement.requestFullscreen();
-            else document.exitFullscreen();
+            const container = video.parentElement;
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) container.requestFullscreen();
+                else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
         });
 
         function formatTime(s) {
